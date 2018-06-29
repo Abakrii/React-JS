@@ -1,14 +1,11 @@
 import React from 'react';
 import PropTypes from "prop-types";
-
-import {
-    withStyles,
-} from "@material-ui/core/styles";
+import {withStyles,} from "@material-ui/core/styles";
 import Input from "@material-ui/core/Input";
 import InputLabel from "@material-ui/core/InputLabel";
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from "@material-ui/core/FormControl";
-
+import Grid from "@material-ui/core/Grid";
 import IconButton from '@material-ui/core/IconButton';
 import AppBar from '@material-ui/core/AppBar';
 import classNames from 'classnames';
@@ -25,94 +22,120 @@ const styles = theme => ({
     },
     textField: {
         flexBasis: 200,
+        width:"100%"
     },
+    container: {
+        flexGrow: 1,
+    },
+    text: {
+
+        textAlign: "center",
+        color: theme.palette.text.secondary,
+        marginTop: 10,
+
+    },
+    collection: {
+        padding: theme.spacing.unit * 2,
+        textAlign: "center",
+        color: theme.palette.text.secondary,
+        marginTop: 10,
+        paddingRight: 300
+    }
 });
 
 class Bene extends React.Component {
-    constructor() {
-        super();
+
+    constructor(props) {
+        super(props);
+
         this.state = {
-            benestudio: [
+            items: [
                 {name: ''}
             ],
         };
     }
 
-    handleBenestudioNameChange = (id, event) => {
-        const benestudio = this.state.benestudio;
-        benestudio[id] = {name: event.target.value};
-        if (benestudio.length - 1 === id) {
-            benestudio.push({name: ''});
+    handleItemsNameChange = (id, event) => {
+        const items = this.state.items;
+        items[id] = {name: event.target.value};
+        if (items.length - 1 === id) {
+            items.push({name: ''});
         }
-        this.setState({benestudio});
+        this.setState({items});
     };
-    handleCancel = () => {
-        document.getElementById("create-course-form").reset();
-    };
-    handleSaveBenestudio = (event) => {
+
+    handleSaveItems = () => {
         const arr = [];
-        this.state.benestudio.map((v) => {
-            if (v.name !== "") {
-                arr.push(v.name)
-            }
+        this.state.items.map((v) => {
+            return v.name !== "" ? arr.push(v.name) : ""
         });
         alert(arr);
     };
-    handleRemoveBenestudio = (id) => () => {
-        this.setState({
-            benestudio: this.state.benestudio.filter((s, sidx) => id !== sidx)
-        });
-    };
-    render() {
-        const { classes } = this.props;
-        return (
-            <form onSubmit={this.handleCancel}
-                  id="create-course-form"
-            >
-                <h4>Test</h4>
-                {this.state.benestudio.map((benestudio, idx) => (
-                    <div className={classes.root}>
-                        <FormControl className={classNames(classes.margin, classes.textField)}>
-                            <InputLabel> test attribute</InputLabel>
-                            <Input
-                                onChange={event => this.handleBenestudioNameChange(idx, event)}
 
-                                endAdornment={
-                                    <InputAdornment position="end">
-                                        <IconButton
-                                        >
-                                            <i
-                                                aria-label="Toggle password visibility"
-                                                type="button"
-                                                onClick={this.handleRemoveBenestudio(idx)}
-                                            >
-                                                x
-                                            </i>
-                                        </IconButton>
-                                    </InputAdornment>
-                                }
-                            />
-                        </FormControl>
+    handleRemoveItems = (id) => () => {
+        if (id !== 0) {
+            this.setState({
+                items: this.state.items.filter((s, sid) => id !== sid)
+            });
+        }
+    };
+
+    render() {
+        const {classes} = this.props;
+        return (
+
+            <form>
+                <div className={classes.container}>
+                    <Grid container spacing={24}>
+                        <Grid item md={3} xs={12} className={classes.text}>
+                            <p style={{textAlign:"left",paddingLeft:"20px",margin:0}}>Test</p>
+                        </Grid>
+                        <Grid item md={9} xs={12} className={classes.collection}>
+                            {this.state.items.map((items, id) => (
+                                <div className={classes.root} key={id}>
+                                    <Grid item md={9} xs={12}>
+                                        <FormControl className={classNames(classes.margin, classes.textField)}>
+                                            <InputLabel>test attribute</InputLabel>
+                                            <Input
+                                                onChange={event => this.handleItemsNameChange(id, event)}
+                                                endAdornment={
+                                                    <InputAdornment position="end">
+                                                        <IconButton>
+                                                            <i
+                                                                aria-label="Toggle password visibility"
+                                                                type="button"
+                                                                onClick={this.handleRemoveItems(id)}>×
+                                                            </i>
+                                                        </IconButton>
+                                                    </InputAdornment>
+                                                }
+                                            />
+                                        </FormControl>
+                                    </Grid>
+                                </div>
+                            ))}
+                        </Grid>
+                    </Grid>
+                    <div>
+                        <AppBar position="static" style={{backgroundColor: '#87CEFA'}}>
+                            <Toolbar style={{justifyContent:"flex-end"}}>
+                                <Button color="inherit"
+                                >Cancel</Button>
+                                <Button color="inherit"
+                                        onClick={this.handleSaveItems}
+                                >Save</Button>
+                            </Toolbar>
+                        </AppBar>
                     </div>
-                ))}
-                <div>
-                    <AppBar position="static" style={{backgroundColor: '#87CEFA'}}>
-                        <Toolbar>
-                            <Button color="inherit"
-                                    onClick={this.handleCancel}
-                            >Cancel</Button>
-                            <Button color="inherit"
-                                    onClick={this.handleSaveBenestudio}
-                            >Save</Button>
-                        </Toolbar>
-                    </AppBar>
                 </div>
             </form>
         );
     }
+
 }
+
 Bene.propTypes = {
-    classes: PropTypes.object.isRequired,
+    classes: PropTypes.object.isRequired
 };
 
 export default withStyles(styles)(Bene);
